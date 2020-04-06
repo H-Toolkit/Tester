@@ -1,0 +1,6 @@
+{
+  "watch": ["src", "__test__"],
+  "ext": "ts",
+  "exec": "node ./node_modules/ts-node/dist/bin.js ./__test__/main.test.ts",
+  "ignore": []
+}
