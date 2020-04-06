@@ -59,6 +59,33 @@ Tester.assert({
 			},
 		],
 	},
-	logIfFailOnly: true,
+	/* logIfFailOnly: true, */
 	showOnlyFields: ['expect', 'result', 'equal'],
+});
+
+const pow = (num: number): number => {
+	return num * num;
+};
+
+Tester.assert({ method: { _function: pow, args: [3], expect: 6 }, logIfFailOnly: true });
+
+import { typeOf } from './typeOf';
+interface Ix {}
+const _interfacing: Ix = {};
+
+class Classing {}
+const _classing = new Classing();
+
+enum _enum {}
+
+// console.log('typeOf', ());
+Tester.assert({
+	method: {
+		_function: typeOf,
+		multiple: [
+			{ args: _classing, expect: 'Classing' },
+			{ args: _interfacing, expect: 'object' },
+			{ args: _enum, expect: 'object' },
+		],
+	},
 });
