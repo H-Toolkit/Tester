@@ -83,9 +83,9 @@ Tester.assert({
 	method: {
 		_function: typeOf,
 		multiple: [
-			{ args: _classing, expect: 'Classing' },
-			{ args: _interfacing, expect: 'object' },
-			{ args: _enum, expect: 'object' },
+			{ args: [_classing], expect: 'Classing' },
+			{ args: [_interfacing], expect: 'object' },
+			{ args: [_enum], expect: 'object' },
 		],
 	},
 });

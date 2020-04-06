@@ -1,6 +1,6 @@
 {
 	"name": "@h-toolkit/tester",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"description": "Lots of solutions to common problems in JavaScript and NodeJS",
 	"main": "dist/main.js",
 	"type": "dist/main.d.ts",

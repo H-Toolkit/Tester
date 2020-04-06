@@ -3,9 +3,9 @@ import { isArray } from 'util';
 export const assert = (parameters: {
 	method?: {
 		_function: Function;
-		multiple?: { args: any; expect: any }[];
+		multiple?: { args: any[]; expect: any }[];
 		description?: string;
-		args?: any;
+		args?: any[];
 		expect?: any;
 	};
 	logIfFailOnly?: boolean;
@@ -23,7 +23,7 @@ export const assert = (parameters: {
 			// tslint:disable-next-line: prefer-for-of
 			for (let i = 0; i < multiple.length; i++) {
 				const _args = multiple[i].args;
-				const result = _function.apply(null, isArray(_args) ? _args : [_args]);
+				const result = _function.apply(null, _args);
 				const record: any = {
 					arguments: _args,
 					expect: multiple[i].expect,
@@ -40,7 +40,7 @@ export const assert = (parameters: {
 			// tslint:disable-next-line: no-console
 			if (tableLogs.length) console.table(tableLogs, showOnlyFields);
 		} else {
-			const result = _function.apply(null, isArray(args) ? args : [args]);
+			const result = _function.apply(null, args);
 			const record: any = {
 				method_name: _function.name || undefined,
 				arguments: args,
