@@ -1,21 +1,23 @@
-import { isArray } from 'util';
+type IFunction = (...arg: any) => any;
 
-export const assert = (parameters: {
+export function assert<TFunc extends IFunction>(parameters: {
 	method?: {
-		_function: Function;
-		multiple?: { args: any[]; expect: any }[];
+		_function: TFunc;
+		method_name?: string;
+		multiple?: { args: Parameters<TFunc>; expect: ReturnType<TFunc> }[];
 		description?: string;
-		args?: any[];
-		expect?: any;
+		args?: Parameters<TFunc>;
+		expect?: ReturnType<TFunc>;
 	};
 	logIfFailOnly?: boolean;
 	showOnlyFields?: string[];
-}): void => {
+}): void {
 	const {
-		method: { _function, multiple, description, args, expect },
+		method: { _function, method_name, description, multiple, args, expect },
 		logIfFailOnly,
 		showOnlyFields,
 	} = parameters;
+	const methodName = '---------------- ' + (_function.name || method_name) + ' ----------------';
 
 	if (_function) {
 		const tableLogs = [];
@@ -31,12 +33,14 @@ export const assert = (parameters: {
 					equal: result === multiple[i].expect || JSON.stringify(result) === JSON.stringify(multiple[i].expect),
 				};
 
-				if (_function.name) record.methodName = _function.name;
+				// if (_function.name) record.methodName = _function.name;
 				// tslint:disable-next-line: no-eval
 				if (description) record.description = description.replace(/\$\{.+?}/g, (_) => eval(_.slice(2, -1)));
 
 				if ((logIfFailOnly && !record.equal) || !logIfFailOnly) tableLogs.push(record);
 			}
+			// tslint:disable-next-line: no-console
+			console.log(methodName);
 			// tslint:disable-next-line: no-console
 			if (tableLogs.length) console.table(tableLogs, showOnlyFields);
 		} else {
@@ -49,12 +53,14 @@ export const assert = (parameters: {
 				equal: result === expect || JSON.stringify(result) === JSON.stringify(expect),
 			};
 
-			if (_function.name) record.methodName = _function.name;
+			// if (_function.name) record.methodName = _function.name;
 			// tslint:disable-next-line: no-eval
 			if (description) record.description = description.replace(/\$\{.+?}/g, (_) => eval(_.slice(2, -1)));
 
 			// tslint:disable-next-line: no-console
+			console.log(methodName);
+			// tslint:disable-next-line: no-console
 			if ((logIfFailOnly && !record.equal) || !logIfFailOnly) console.table([record], showOnlyFields);
 		}
 	}
-};
+}
