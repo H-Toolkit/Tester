@@ -1,9 +1,9 @@
 export const assert = (parameters: {
 	method?: {
 		_function: Function;
-		multiple?: { args: any[]; expect: any }[];
+		multiple?: { args: any; expect: any }[];
 		description?: string;
-		args?: any[];
+		args?: any;
 		expect?: any;
 	};
 	logIfFailOnly?: boolean;
