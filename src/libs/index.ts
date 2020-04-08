@@ -1,7 +1,7 @@
 type IFunction = (...arg: any) => any;
 
 export function assert<TFunc extends IFunction>(parameters: {
-	method?: {
+	method: {
 		_function: TFunc;
 		method_name?: string;
 		multiple?: { args: Parameters<TFunc>; expect: ReturnType<TFunc> }[];
@@ -12,11 +12,9 @@ export function assert<TFunc extends IFunction>(parameters: {
 	logIfFailOnly?: boolean;
 	showOnlyFields?: string[];
 }): void {
-	const {
-		method: { _function, method_name, description, multiple, args, expect },
-		logIfFailOnly,
-		showOnlyFields,
-	} = parameters;
+	const { method, logIfFailOnly, showOnlyFields } = parameters;
+	const { _function, method_name, description, multiple, args, expect } = method;
+
 	const methodName = _function.name || method_name;
 	if (!methodName) throw new Error('Must provide method name if anonymous function');
 
@@ -44,13 +42,11 @@ export function assert<TFunc extends IFunction>(parameters: {
 				if ((logIfFailOnly && !record.equal) || !logIfFailOnly) tableLogs.push(record);
 			}
 			// tslint:disable-next-line: no-console
-			console.log(methodName);
-			// tslint:disable-next-line: no-console
 			if (tableLogs.length) console.table(tableLogs, showOnlyFields);
 			// tslint:disable-next-line: no-console
 			console.timeEnd(methodName); /* Stop the timer */
 		} else {
-			const result = _function.apply(null, args);
+			const result = _function.apply(null, args!);
 			const record: any = {
 				method_name: _function.name || undefined,
 				arguments: args,
@@ -63,8 +59,6 @@ export function assert<TFunc extends IFunction>(parameters: {
 			// tslint:disable-next-line: no-eval
 			if (description) record.description = description.replace(/\$\{.+?}/g, (_) => eval(_.slice(2, -1)));
 
-			// tslint:disable-next-line: no-console
-			console.log(methodName);
 			// tslint:disable-next-line: no-console
 			if ((logIfFailOnly && !record.equal) || !logIfFailOnly) console.table([record], showOnlyFields);
 			// tslint:disable-next-line: no-console

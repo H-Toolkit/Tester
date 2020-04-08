@@ -78,23 +78,16 @@ Tester.assert({
 });
 
 /* typeOf */
-import { typeOf } from './typeOf';
-interface Ix {}
-const _interfacing: Ix = {};
-
-class Classing {}
-const _classing = new Classing();
-
-enum _enum {}
+import { sum } from './sum';
 
 Tester.assert({
 	method: {
-		_function: typeOf,
-		method_name: 'typeOf',
+		_function: sum,
+		method_name: 'sum',
 		multiple: [
-			{ args: [_classing], expect: 'Classing' },
-			{ args: [_interfacing], expect: 'object' },
-			{ args: [_enum], expect: 'object' },
+			{ args: [2, 3], expect: 5 },
+			{ args: [2, 3], expect: 6 },
+			{ args: [3, 3], expect: 6 },
 		],
 	},
 	logIfFailOnly: true,
