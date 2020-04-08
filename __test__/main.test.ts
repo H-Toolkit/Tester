@@ -60,7 +60,7 @@ Tester.assert<typeof concat>({
 			},
 		],
 	},
-	logIfFailOnly: true,
+	// logIfFailOnly: true,
 	// showOnlyFields: ['expect', 'result', 'equal'],
 });
 

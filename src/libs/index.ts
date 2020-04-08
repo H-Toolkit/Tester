@@ -1,4 +1,10 @@
-type IFunction = (...arg: any) => any;
+// Installed
+import * as chalk from 'chalk';
+import * as util from 'util';
+import { table } from 'table';
+
+// Internal
+import { IFunction } from '../constants/types';
 
 export function assert<TFunc extends IFunction>(parameters: {
 	method?: {
@@ -17,7 +23,10 @@ export function assert<TFunc extends IFunction>(parameters: {
 		logIfFailOnly,
 		showOnlyFields,
 	} = parameters;
-	const methodName = '---------------- ' + (_function.name || method_name) + ' ----------------';
+	const methodName = _function.name || method_name;
+
+	// tslint:disable-next-line: no-console
+	console.time(methodName); /* Start timer */
 
 	if (_function) {
 		const tableLogs = [];
@@ -26,11 +35,12 @@ export function assert<TFunc extends IFunction>(parameters: {
 			for (let i = 0; i < multiple.length; i++) {
 				const _args = multiple[i].args;
 				const result = _function.apply(null, _args);
+				const equal = result === multiple[i].expect || JSON.stringify(result) === JSON.stringify(multiple[i].expect);
 				const record: any = {
 					arguments: _args,
 					expect: multiple[i].expect,
 					result,
-					equal: result === multiple[i].expect || JSON.stringify(result) === JSON.stringify(multiple[i].expect),
+					equal: chalk[equal ? 'green' : 'red'](equal),
 				};
 
 				// if (_function.name) record.methodName = _function.name;
@@ -39,18 +49,37 @@ export function assert<TFunc extends IFunction>(parameters: {
 
 				if ((logIfFailOnly && !record.equal) || !logIfFailOnly) tableLogs.push(record);
 			}
+			// console.log('tableLogs', tableLogs);
+			// console.log('tableLogs key', tableLogs[0] && Object.keys(tableLogs[0]));
+			// console.log('tableLogs values', tableLogs[0] && Object.values(tableLogs[0]));
+
 			// tslint:disable-next-line: no-console
-			console.log(methodName);
+			if (tableLogs.length)
+				console.log(
+					// mapRecordToTable(tableLogs)
+
+					table(mapRecordToTable(tableLogs))
+
+					// util.inspect(mapRecordToTable(tableLogs), {
+					// 	colors: true,
+					// 	depth: null,
+					// 	showHidden: false,
+					// })
+				);
+
 			// tslint:disable-next-line: no-console
-			if (tableLogs.length) console.table(tableLogs, showOnlyFields);
+			// if (tableLogs.length) console.table(tableLogs, showOnlyFields);
+			// tslint:disable-next-line: no-console
+			console.timeEnd(methodName); /* Stop the timer */
 		} else {
 			const result = _function.apply(null, args);
+			const equal = result === expect || JSON.stringify(result) === JSON.stringify(expect);
 			const record: any = {
 				method_name: _function.name || undefined,
 				arguments: args,
 				expect,
 				result,
-				equal: result === expect || JSON.stringify(result) === JSON.stringify(expect),
+				equal: chalk[equal ? 'green' : 'red'](equal),
 			};
 
 			// if (_function.name) record.methodName = _function.name;
@@ -58,9 +87,21 @@ export function assert<TFunc extends IFunction>(parameters: {
 			if (description) record.description = description.replace(/\$\{.+?}/g, (_) => eval(_.slice(2, -1)));
 
 			// tslint:disable-next-line: no-console
-			console.log(methodName);
-			// tslint:disable-next-line: no-console
 			if ((logIfFailOnly && !record.equal) || !logIfFailOnly) console.table([record], showOnlyFields);
+			// tslint:disable-next-line: no-console
+			console.timeEnd(methodName); /* Stop the timer */
 		}
 	}
 }
+
+const mapRecordToTable = (records: {}[]): any => {
+	const result = [];
+	for (let i = 0; i < records.length; i++) {
+		const record = records[i];
+		if (!i && record) {
+			result.push(Object.keys(record).map((filedName) => chalk.blue(filedName)));
+			result.push(Object.values(record));
+		} else result.push(Object.values(record));
+	}
+	return result;
+};
