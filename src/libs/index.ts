@@ -17,7 +17,11 @@ export function assert<TFunc extends IFunction>(parameters: {
 		logIfFailOnly,
 		showOnlyFields,
 	} = parameters;
-	const methodName = '---------------- ' + (_function.name || method_name) + ' ----------------';
+	const methodName = _function.name || method_name;
+	if (!methodName) throw new Error('Must provide method name if anonymous function');
+
+	// tslint:disable-next-line: no-console
+	console.time(methodName); /* Start timer */
 
 	if (_function) {
 		const tableLogs = [];
@@ -43,6 +47,8 @@ export function assert<TFunc extends IFunction>(parameters: {
 			console.log(methodName);
 			// tslint:disable-next-line: no-console
 			if (tableLogs.length) console.table(tableLogs, showOnlyFields);
+			// tslint:disable-next-line: no-console
+			console.timeEnd(methodName); /* Stop the timer */
 		} else {
 			const result = _function.apply(null, args);
 			const record: any = {
@@ -61,6 +67,8 @@ export function assert<TFunc extends IFunction>(parameters: {
 			console.log(methodName);
 			// tslint:disable-next-line: no-console
 			if ((logIfFailOnly && !record.equal) || !logIfFailOnly) console.table([record], showOnlyFields);
+			// tslint:disable-next-line: no-console
+			console.timeEnd(methodName); /* Stop the timer */
 		}
 	}
 }
