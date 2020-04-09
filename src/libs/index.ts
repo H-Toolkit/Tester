@@ -10,9 +10,10 @@ export function assert<TFunc extends IFunction>(parameters: {
 		expect?: ReturnType<TFunc>;
 	};
 	logIfFailOnly?: boolean;
+	noLog?: boolean;
 	showOnlyFields?: string[];
 }): void {
-	const { method, logIfFailOnly, showOnlyFields } = parameters;
+	const { method, logIfFailOnly, showOnlyFields, noLog } = parameters;
 	const { _function, method_name, description, multiple, args, expect } = method;
 
 	const methodName = _function.name || method_name;
@@ -42,7 +43,7 @@ export function assert<TFunc extends IFunction>(parameters: {
 				if ((logIfFailOnly && !record.equal) || !logIfFailOnly) tableLogs.push(record);
 			}
 			// tslint:disable-next-line: no-console
-			if (tableLogs.length) console.table(tableLogs, showOnlyFields);
+			if (!noLog && tableLogs.length) console.table(tableLogs, showOnlyFields);
 			// tslint:disable-next-line: no-console
 			console.timeEnd(methodName); /* Stop the timer */
 		} else {
@@ -60,7 +61,7 @@ export function assert<TFunc extends IFunction>(parameters: {
 			if (description) record.description = description.replace(/\$\{.+?}/g, (_) => eval(_.slice(2, -1)));
 
 			// tslint:disable-next-line: no-console
-			if ((logIfFailOnly && !record.equal) || !logIfFailOnly) console.table([record], showOnlyFields);
+			if (!noLog && ((logIfFailOnly && !record.equal) || !logIfFailOnly)) console.table([record], showOnlyFields);
 			// tslint:disable-next-line: no-console
 			console.timeEnd(methodName); /* Stop the timer */
 		}

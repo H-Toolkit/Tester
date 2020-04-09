@@ -6,6 +6,7 @@ const multiply = (x: number, y: number): number => {
 
 Tester.assert({ method: { _function: multiply, args: [3, 2], expect: 6 }, logIfFailOnly: true });
 Tester.assert({ method: { _function: multiply, args: [3, 2], expect: 7 }, logIfFailOnly: true });
+Tester.assert({ method: { _function: multiply, args: [3, 2], expect: 8 }, noLog: true });
 // Tester.assert({ method: { _function: multiply, args: [3, 2], expect: '6' }, logIfFailOnly: true });
 Tester.assert({
 	method: {
@@ -90,5 +91,6 @@ Tester.assert({
 			{ args: [3, 3], expect: 6 },
 		],
 	},
+	// noLog: true,
 	logIfFailOnly: true,
 });
