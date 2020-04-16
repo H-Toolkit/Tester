@@ -9,11 +9,11 @@ export function assert<TFunc extends IFunction>(parameters: {
 		args?: Parameters<TFunc>;
 		expect?: ReturnType<TFunc>;
 	};
-	logIfFailOnly?: boolean;
-	noLog?: boolean;
+	noLogFor?: Partial<{ succeeded: boolean; timer: boolean; table: boolean; all: boolean }>;
 	showOnlyFields?: string[];
 }): void {
-	const { method, logIfFailOnly, showOnlyFields, noLog } = parameters;
+	const { method, showOnlyFields, noLogFor } = parameters;
+	const { succeeded: logIfFailOnly, timer: noTimer, table: noTable, all: noLogAtAll } = noLogFor || {};
 	const { _function, method_name, description, multiple, args, expect } = method;
 
 	const methodName = _function.name || method_name;
@@ -43,9 +43,9 @@ export function assert<TFunc extends IFunction>(parameters: {
 				if ((logIfFailOnly && !record.equal) || !logIfFailOnly) tableLogs.push(record);
 			}
 			// tslint:disable-next-line: no-console
-			if (!noLog && tableLogs.length) console.table(tableLogs, showOnlyFields);
+			if (!noTable && tableLogs.length && !noLogAtAll) console.table(tableLogs, showOnlyFields);
 			// tslint:disable-next-line: no-console
-			console.timeEnd(methodName); /* Stop the timer */
+			if (!noTimer && !noLogAtAll) console.timeEnd(methodName); /* Stop the timer */
 		} else {
 			const result = _function.apply(null, args!);
 			const record: any = {
@@ -60,10 +60,11 @@ export function assert<TFunc extends IFunction>(parameters: {
 			// tslint:disable-next-line: no-eval
 			if (description) record.description = description.replace(/\$\{.+?}/g, (_) => eval(_.slice(2, -1)));
 
+			if ((!noTable && logIfFailOnly && !record.equal && !logIfFailOnly) || !noLogAtAll)
+				// tslint:disable-next-line: no-console
+				console.table([record], showOnlyFields);
 			// tslint:disable-next-line: no-console
-			if (!noLog && ((logIfFailOnly && !record.equal) || !logIfFailOnly)) console.table([record], showOnlyFields);
-			// tslint:disable-next-line: no-console
-			console.timeEnd(methodName); /* Stop the timer */
+			if (!noTimer && !noLogAtAll) console.timeEnd(methodName); /* Stop the timer */
 		}
 	}
 }

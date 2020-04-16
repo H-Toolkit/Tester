@@ -1,13 +1,13 @@
-import * as Tester from '../src/main';
+import Tester from '../src/main';
 
 const multiply = (x: number, y: number): number => {
 	return x * y;
 };
 
-Tester.assert({ method: { _function: multiply, args: [3, 2], expect: 6 }, logIfFailOnly: true });
-Tester.assert({ method: { _function: multiply, args: [3, 2], expect: 7 }, logIfFailOnly: true });
-Tester.assert({ method: { _function: multiply, args: [3, 2], expect: 8 }, noLog: true });
-// Tester.assert({ method: { _function: multiply, args: [3, 2], expect: '6' }, logIfFailOnly: true });
+Tester.assert({ method: { _function: multiply, args: [3, 2], expect: 6 }, noLogFor: { succeeded: true } });
+Tester.assert({ method: { _function: multiply, args: [3, 2], expect: 7 }, noLogFor: { succeeded: true } });
+Tester.assert({ method: { _function: multiply, args: [3, 2], expect: 8 }, noLogFor: { table: true } });
+// Tester.assert({ method: { _function: multiply, args: [3, 2], expect: '6' }, noLogFor: { succeeded: true}});
 Tester.assert({
 	method: {
 		_function: multiply,
@@ -18,7 +18,7 @@ Tester.assert({
 		],
 		description: '${multiple[i].args[0]} * ${multiple[i].args[1]} = ${multiple[i].expect}',
 	},
-	logIfFailOnly: true,
+	noLogFor: { succeeded: true },
 	// showOnlyFields: ['expect', 'result', 'equal'],
 });
 
@@ -61,7 +61,7 @@ Tester.assert<typeof concat>({
 			},
 		],
 	},
-	logIfFailOnly: true,
+	noLogFor: { succeeded: true },
 	// showOnlyFields: ['expect', 'result', 'equal'],
 });
 
@@ -73,9 +73,13 @@ Tester.assert({
 	method: {
 		_function: pow,
 		args: [3],
-		expect: 6,
+		expect: 7,
 	},
-	logIfFailOnly: true,
+	noLogFor: {
+		// succeeded: true,
+		// timer: true,
+		all: true,
+	},
 });
 
 /* typeOf */
@@ -91,6 +95,5 @@ Tester.assert({
 			{ args: [3, 3], expect: 6 },
 		],
 	},
-	// noLog: true,
-	logIfFailOnly: true,
+	noLogFor: { succeeded: true },
 });
