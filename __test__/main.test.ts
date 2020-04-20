@@ -4,10 +4,11 @@ const multiply = (x: number, y: number): number => {
 	return x * y;
 };
 
-Tester.assert({ method: { _function: multiply, args: [3, 2], expect: 6 }, noLogFor: { succeeded: true } });
+Tester.assert({
+	method: { _function: multiply, args: [3, 2], expect: 8, description: '${args[0]} * ${args[1]} = ${expect}' },
+	noLogFor: { /* succeeded */ all /* timer */ /* table */: true },
+});
 Tester.assert({ method: { _function: multiply, args: [3, 2], expect: 7 }, noLogFor: { succeeded: true } });
-Tester.assert({ method: { _function: multiply, args: [3, 2], expect: 8 }, noLogFor: { table: true } });
-// Tester.assert({ method: { _function: multiply, args: [3, 2], expect: '6' }, noLogFor: { succeeded: true}});
 Tester.assert({
 	method: {
 		_function: multiply,
@@ -18,7 +19,7 @@ Tester.assert({
 		],
 		description: '${multiple[i].args[0]} * ${multiple[i].args[1]} = ${multiple[i].expect}',
 	},
-	noLogFor: { succeeded: true },
+	noLogFor: { succeeded/* table *//* timer *//* all */: true },
 	// showOnlyFields: ['expect', 'result', 'equal'],
 });
 
